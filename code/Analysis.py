@@ -665,15 +665,15 @@ def plotME(suf,avg=False,mask=[]):
                         else: tmp=sign*(z[xAll[sel,3]==5-h]-z[xAll[sel,3]==0].mean()+b)
                     else:tmp=sign*(z[xAll[sel,0]==2*h+1]-z[xAll[sel,0]==1].mean()+b)
                     if i>0 and nm[0]!='N' and nm[1]!='Q': tmp=(np.exp(tmp)-1)*100
-                    plotCIttest1(tmp,x=[h,7-h][int(i<3 and h>2)])
+                    plotCIttest1(tmp,x=[h,7-h][int(i<3 and h>2)],clr='k')
             else: 
                 k=['z0','zh','zd','zd'][i]
                 
                 tmp=w[k+'d'][:,0][:,np.newaxis]
                 if i==3: y=np.concatenate([tmp,w[k+'t']+tmp],axis=1)
                 else: y=np.concatenate([w[k+'d'][:,::-1],w[k+'c']+tmp],axis=1)
-                if i>0 and nm[0]!='N' : errorbar((np.exp(sign*y)-1)*100)
-                else: errorbar(sign*y)
+                if i>0 and nm[0]!='N' : errorbar((np.exp(sign*y)-1)*100,clr='k')
+                else: errorbar(sign*y,clr='k')
             
             if nm[1:]=='TP' and nm[0]!='N':
                 if i==1: plt.ylim([-16,2])
@@ -764,6 +764,10 @@ def printConverged():
         print(ndarray2latextable(D,decim=0) )   
 
 if __name__=='__main__':
+    plotME('TN',avg=True)
+    plotME('MN',avg=True)
+    plotME('QP',avg=False,mask=[1,3,4])
+    plotME('TP',avg=False);bla
     # get data
     info,Dres=loadData()
     yLT,xAll=preprocessData(info,Dres) 
@@ -788,7 +792,6 @@ if __name__=='__main__':
     unpooledAnova()
     plotME('TN',avg=True)
     plotME('TP',avg=False)
-    plotME('MN',avg=True)
     plotME('MN',avg=True)
     plotME('QP',avg=False,mask=[1,3,4])
     
