@@ -742,6 +742,36 @@ def plotDishabX(nm='L'):
     print(errorbar(100*sgn*(zd[:,0,2]+zd[:,0,3]-zd[:,0,0]-zd[:,0,1]+
         zd[:,1,2]+zd[:,1,3]-zd[:,1,0]-zd[:,1,1])/4))
 
+def plotAddMultiDemo():
+    ''' plot some examples of z(t) of trend model'''
+    from matusplotlib import errorbar,figure
+    import pylab as plt
+    figure(size=3,aspect=0.4)
+    x=np.arange(8)+1
+    ds=[[[4.7,0,-1.3],#4L5
+        [5.1,-.1,.4],#4C5
+        [3.7,-.15,1.8]],#4O5
+        [[1.5,-7,-10],
+        [1.6,-9,10],
+        [1.2,-10,70]]]
+    for k in range(2):
+        subplot(1,2,k+1);lgd=[]
+        for z0,zh,zd in ds[k]:
+            #z0=15;zh=-1;zd=4
+            if k==0: y= z0+zh*(x-1)+zd*np.int32(x>=5)
+            if k==1: 
+                zh=np.log(zh/100+1);zd=np.log(zd/100+1)+0.2
+                y= np.exp(z0+zh*(x-1)+zd*np.int32(x>=5))
+            plt.plot(x,y,'o-')
+            lgd.append('$\\alpha=%.1f$, $\\beta=%.1f$, $\\gamma=%.1f$'%(z0,zh,zd))
+        plt.legend(lgd,prop={'size': 6})
+        plt.ylim([2,6])
+        plt.xlabel('$t$')
+        if k==0: plt.ylabel('$z(t)$')
+        #else:plt.gca().set_yticklabels([])
+        plt.title(['Additive','Multiplicative'][k])
+    plt.savefig(FPATH+f'amDemo.png',bbox_inches='tight',dpi=DPI)
+    
 def printConverged():
     ''' prints latex table with the number of infants for which 
         the estimation of the no-pooling model failed to converge'''
@@ -801,7 +831,7 @@ if __name__=='__main__':
     plotDishabX(nm='L')
     printConverged()
     
-    # misc routines, figures not reported
+    # misc routines, figures not reported or reported in supplement
     plotDistribution()
     plotSample(info,Dres)
     
@@ -811,4 +841,5 @@ if __name__=='__main__':
     plotModelComparison('TNo',ylims=[[-700,-900],[3.5,5]])
     plotModelComparison('MN')
     plotModelComparison('MP')
+    plotAddMultiDemo()
 
