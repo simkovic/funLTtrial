@@ -9,7 +9,7 @@ import pylab as plt
 from matusplotlib import errorbar,figure,subplot,ndarray2latextable,subplotAnnotate
 
 SEED=6
-DPI=400
+DPI=350
 
 def printCI(w,var=None,decimals=3):
     sfmt=' {:.{:d}f} [{:.{:d}f},{:.{:d}f}]'
@@ -687,6 +687,7 @@ def plotME(suf,avg=False,mask=[]):
             ax.set_xticks(range([5,4][i==3]))
             ax.set_xticklabels([['4O','4C','4L','7L','10L'],['4O','4C','4L','7L','10L'],['4O1','4C1','4L1','7L1','10L1'],['4L1','4L3','4L5','4L7']][i]);
             if not j:plt.ylabel(['offset','slope','dishabituation'][min(i,2)])
+            subplotAnnotate(fs=8)
     avg=int(avg)
     plt.savefig(FPATH+f'me{suf}.png',bbox_inches='tight',dpi=DPI)
 
@@ -794,10 +795,6 @@ def printConverged():
         print(ndarray2latextable(D,decim=0) )   
 
 if __name__=='__main__':
-    plotME('TN',avg=True)
-    plotME('MN',avg=True)
-    plotME('QP',avg=False,mask=[1,3,4])
-    plotME('TP',avg=False);bla
     # get data
     info,Dres=loadData()
     yLT,xAll=preprocessData(info,Dres) 

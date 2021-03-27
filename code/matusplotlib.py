@@ -202,7 +202,7 @@ def subplot(*args):
     formatAxes(ax)
     return ax
 
-def subplotAnnotate(loc='nw',nr=None,clr='k'):
+def subplotAnnotate(loc='nw',nr=None,clr='k',fs=12):
     if type(loc) is list and len(loc)==2: ofs=loc
     elif loc=='nw': ofs=[0.1,0.9]
     elif loc=='sw': ofs=[0.1,0.1]
@@ -214,7 +214,7 @@ def subplotAnnotate(loc='nw',nr=None,clr='k'):
     plt.text(plt.xlim()[0]+ofs[0]*(plt.xlim()[1]-plt.xlim()[0]),
             plt.ylim()[0]+ofs[1]*(plt.ylim()[1]-plt.ylim()[0]), 
             str(chr(65+nr)),horizontalalignment='center',verticalalignment='center',
-            fontdict={'weight':'bold'},fontsize=12,color=clr)
+            fontdict={'weight':'bold'},fontsize=fs,color=clr)
 
 def _errorbar(out,x,clr='k'):
     plt.plot([x,x],out[1:3],color=clr)
