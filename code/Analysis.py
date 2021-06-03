@@ -43,11 +43,11 @@ def loadData():
             Dres - LTs
     '''
     deg2cm=np.pi/180*70
-    cpath='/../output/pseud/'
+    cpath='../output/pseud/'
     opath=cpath+'funLT/'
     fn='vpinfo.res'
     info=np.int32(np.loadtxt(cpath+fn,delimiter=','))
-    info=info[info[:,7]!=-1,:]
+    #info=info[info[:,7]!=-1,:]
     print('Check if all data files present')
     for i in range(info.shape[0]):
         fnn='funLTVp%dc%dM.'%(info[i,0],info[i,1])
@@ -85,7 +85,7 @@ def loadData():
         else: suf=''
         if nrtr<8: nrtrs.append(nrtr)
         #if nrtr!=8: print('%d saw %d trials'%(info[i,0],nrtr)+suf)
-        assert(d[0]==info[i,7])
+        assert(d[0]==info[i,6])
     #plt.hist(nrtrs,bins=np.arange(0,9)-0.5)
 
     print('Check format of .log files')
@@ -143,10 +143,10 @@ def loadData():
 def plotSample(info,Dres):
     '''plot sample description'''
     import pylab as plt
-    #assert(np.all(info[:,4]>=30*3))
-    assert(np.all(info[:,4]<=30*12))
+    #assert(np.all(info[:,3]>=30*3))
+    assert(np.all(info[:,3]<=30*12))
     tc=np.int32(list(map(lambda x: (x[1:]>-1).sum()/2,Dres)))
-    plt.hist(info[:,4],bins=np.linspace(30*3,30*11,15))
+    plt.hist(info[:,3],bins=np.linspace(30*3,30*11,15))
     plt.gca().set_xticks(np.linspace(30*3,30*11,8))
     plt.xlabel('age in days');
     plt.figure(figsize=[12,6])
@@ -156,17 +156,17 @@ def plotSample(info,Dres):
         found=np.zeros(sel.sum())
         temp=[]
         for j in range(len(LBLS)):
-            condd=np.logical_and(info[sel,7]==LBLS[j],tc[sel]>3)
-            found[info[sel,7]==LBLS[j]]=1
+            condd=np.logical_and(info[sel,6]==LBLS[j],tc[sel]>3)
+            found[info[sel,6]==LBLS[j]]=1
             temp.append(np.sum(condd))
             ax.barh(j,temp[-1],color='k')
             plt.text(np.sum(condd),j,'%d'%np.sum(condd))
-        #print(info[sel,0][~np.bool8(found)])
         ax.set_yticks(range(len(LBLS)))
         if not i: ax.set_yticklabels(LBLS)
         else: ax.set_yticklabels([])
         plt.title(['4M','7M','10M'][i])
         plt.xlim([0,14])
+    print('boys:',info[:,2].sum(),'per cohort',np.histogram(info[:,1],bins=[0,5,8,11])[0] )
         
 def preprocessData(info,Dres,plot=False):
     '''puts data in format suitable for pystan'''
@@ -176,13 +176,13 @@ def preprocessData(info,Dres,plot=False):
     xSC=np.zeros(info.shape[0],dtype=np.int32)#stimulus change
     xD=np.nan*np.ones(info.shape[0],dtype=np.int32)
     # saliency dimension 0-light, 1-color, 2-orient
-    xA=info[:,4]
+    xA=info[:,3]
     hs=np.zeros((len(LBLS),3),dtype=np.int32)
     for i in range(len(LBLS)):
         for j in range(3):
             if plot: ax=plt.subplot(len(LBLS),3,i*3+j+1)
             for k in range(len(Dres)):
-                if info[k,1]!=[4,7,10][j] or info[k,7]!=LBLS[i]: continue
+                if info[k,1]!=[4,7,10][j] or info[k,6]!=LBLS[i]: continue
                 temp=Dres[k][2::2]-Dres[k][1::2]
                 temp[temp==0]=np.nan
                 gm[i,j,hs[i,j],:temp.size]=temp
@@ -795,7 +795,7 @@ def printConverged():
         print(ndarray2latextable(D,decim=0) )   
 
 if __name__=='__main__':
-    # get data
+    # load and prepare data
     info,Dres=loadData()
     yLT,xAll=preprocessData(info,Dres) 
     np.save('data/yLT',yLT)
